@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://kit.fontawesome.com/53d0520c41.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="authorization-form">
+            <a href="#" class="back-link"><i class="fa-solid fa-arrow-left"></i> Назад на сайт</a>
+
+            <div class="form-header">
+                <h2>Создать аккаунт</h2>
+                <p>Уже есть аккаунт? <a href={{ url_for('login') }}>Войти</a></p>
+            </div>
+
+            <form>
+                <div class="input-group">
+                    <div class="row-container">
+                        <div class="input-field half">
+                            <input type="text" placeholder="Имя">
+                        </div>
+                        <div class="input-field half">
+                            <input type="text" placeholder="Фамилия">
+                        </div>
+                    </div>
+
+                    <div class="input-field">
+                        <input type="email" placeholder="Электронная почта">
+                    </div>
+
+                    <div class="input-field password-field">
+                        <input type="password" placeholder="Пароль">
+                        <i class="fa-regular fa-eye toggle-password"></i>
+                    </div>
+
+                    <div class="row-container">
+                         <div class="terms">
+                            <label>
+                                <input type="checkbox">
+                                <span>Я даю согласие на обработку персональных данных</span>
+                            </label>
+                        </div>
+                    </div>
+
+                  <button type="submit" class="primary-btn">Создать аккаунт</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

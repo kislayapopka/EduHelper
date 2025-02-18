@@ -1,0 +1,163 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Corbel', sans-serif;
+}
+
+body {
+    background: #FCE1DC;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    padding: 40px 20px;
+}
+
+.authorization-form {
+    background: #fff;
+    border-radius: 16px;
+    padding: 60px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(74, 21, 12, 0.2);
+    position: relative;
+}
+
+.back-link {
+    color: #4A150C;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 40px;
+    font-size: 15px;
+}
+
+.form-header h2 {
+    color: #4A150C;
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.form-header p {
+    color: #A35D51;
+    margin-bottom: 40px;
+    font-size: 15px;
+}
+
+.form-header p a {
+    color: #4A150C;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.row-container {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    gap: 20px;
+}
+
+.row-container a {
+    font-size: 14px;
+    color: #4A150C;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.input-field {
+    background: #FCE1DC;
+    border-radius: 8px;
+    width: 100%;
+    position: relative;
+    transition: 0.3s;
+    border: 2px solid transparent;
+}
+
+.input-field.half {
+    width: calc(50% - 10px);
+}
+
+.input-field input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #4A150C;
+    padding: 16px;
+    font-size: 15px;
+    outline: none;
+}
+
+.input-field:focus-within {
+    border-color: #A35D51;
+    box-shadow: 0 0 0 3px rgba(163, 93, 81, 0.2);
+}
+
+.password-field .toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #A35D51;
+}
+
+.terms {
+    color: #A35D51;
+    font-size: 14px;
+}
+
+.terms label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.terms input[type="checkbox"] {
+    accent-color: #A35D51;
+}
+
+.primary-btn {
+    width: 100%;
+    order: 1;
+    background: #A35D51;
+    color: #fff;
+    border: none;
+    padding: 18px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.primary-btn:hover {
+    background: #8C4C42;
+}
+
+@media (max-width: 480px) {
+    .authorization-form {
+        padding: 40px 25px;
+    }
+
+    .row-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .input-field.half {
+        width: 100%;
+    }
+}
