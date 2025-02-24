@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/libraries/bootstrap.min.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/main.css") }}">
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
-    {% block content %} {% endblock %}
+<header class="header"> {% include 'main/_header.html' %} </header>
+    <div class="page">
+        <main class="content"> {% block content %} {% endblock %} </main>
+        <footer class="footer"> {% include 'main/_footer.html' %} </footer>
+    </div>
+    <script src="{{ url_for('static', filename="js/libraries/bootstrap.min.js") }}"></script>
+    <script src="{{ url_for('static', filename="js/main.js") }}"></script>
 </body>
 </html>
