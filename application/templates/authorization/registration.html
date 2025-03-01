@@ -1,55 +1,55 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Регистрация</title>
-    <link rel="stylesheet" href="/css/reg-style.css">
-    <script src="https://kit.fontawesome.com/53d0520c41.js" crossorigin="anonymous"></script>
-</head>
+{% extends "authorization/base-auth.html" %}
 
-<body>
-    <div class="container">
-        <div class="authorization-form">
-            <a href="#" class="back-link"><i class="fa-solid fa-arrow-left"></i> Назад на сайт</a>
+{% block title %}Регистрация{% endblock %}
 
-            <div class="form-header">
-                <h2>Создать аккаунт</h2>
-                <p>Уже есть аккаунт? <a href={{ url_for('login') }}>Войти</a></p>
+{% block form_title %}Создать аккаунт{% endblock %}
+
+{% block form_subtitle %}
+    <p>Уже есть аккаунт? <a href="{{ url_for('login.index') }}"> Войти </a></p>
+{% endblock %}
+
+{% block form_content %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="input-group">
+            <div class="row-container">
+                <div class="input-field half">
+                    {{ form.name(placeholder="Имя") }}
+                </div>
+                <div class="input-field half">
+                    {{ form.surname(placeholder="Фамилия") }}
+                </div>
             </div>
 
-            <form>
-                <div class="input-group">
-                    <div class="row-container">
-                        <div class="input-field half">
-                            <input type="text" placeholder="Имя">
-                        </div>
-                        <div class="input-field half">
-                            <input type="text" placeholder="Фамилия">
-                        </div>
-                    </div>
+            <div class="input-field">
+                {{ form.patronymic(placeholder="Отчество (если имеется)") }}
+            </div>
 
-                    <div class="input-field">
-                        <input type="email" placeholder="Электронная почта">
-                    </div>
+            <div class="input-field">
+                {{ form.email(placeholder="Электронная почта") }}
+            </div>
 
-                    <div class="input-field password-field">
-                        <input type="password" placeholder="Пароль">
-                        <i class="fa-regular fa-eye toggle-password"></i>
-                    </div>
+            <div class="input-field password-field">
+                {{ form.password(placeholder="Пароль") }}
+                <i class="fa-regular fa-eye toggle-password"></i>
+            </div>
 
-                    <div class="row-container">
-                         <div class="terms">
-                            <label>
-                                <input type="checkbox">
-                                <span>Я даю согласие на обработку персональных данных</span>
-                            </label>
-                        </div>
-                    </div>
+            <div class="input-field password-field">
+                {{ form.confirm(placeholder="Повторите пароль") }}
+                <i class="fa-regular fa-eye toggle-password"></i>
+            </div>
 
-                  <button type="submit" class="primary-btn">Создать аккаунт</button>
+            <div class="row-container">
+                <div class="terms">
+                    <label>
+                        {{ form.checkbox() }}
+                        <span>{{ form.checkbox.label.text }}</span>
+                    </label>
                 </div>
-            </form>
+            </div>
+
+            {{ form.submit(class="primary-btn") }}
         </div>
-    </div>
-</body>
-</html>
+    </form>
+{% endblock %}
