@@ -28,6 +28,13 @@
 
             <div class="input-field">
                 {{ form.email(placeholder="Электронная почта") }}
+                {% if form.email.errors %}
+                    <div class="invalid-feedback" style="display: block!important;">
+                        {% for error in form.email.errors %}
+                            <span> {{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="input-field password-field">

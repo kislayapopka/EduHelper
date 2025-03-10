@@ -45,8 +45,8 @@
             <div class="row-container">
                 <div class="terms">
                     <label>
-                        <input type="checkbox" name="remember">
-                        <span>Запомнить меня</span>
+                        {{ form.remember() }}
+                        <span> {{ form.remember.label.text }} </span>
                     </label>
                 </div>
                 <a href="#">Забыли пароль?</a>

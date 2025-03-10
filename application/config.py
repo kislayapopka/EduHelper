@@ -12,4 +12,6 @@ class Config(object):
     SECRET_KEY = '1923hnsdcvs09erkjgmdsq'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
+    UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static/uploads'))
+
     pass

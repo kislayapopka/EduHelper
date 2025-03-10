@@ -1,0 +1,39 @@
+{% extends 'main/base.html' %}
+{% block title %} {{ post.caption }} {% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ post.caption }}</h2>
+    <p>{{ post.body }}</p>
+    <small>Дата публикации: {{ post.date_created.strftime("%Y-%m-%d") }}</small>
+    <br>
+    <small>Срок выполнения: {{ post.due_date.strftime("%Y-%m-%d %H:%M") }}</small>
+    
+    {% if post.attached_files %}
+        <p><strong>Прикрепленные файлы:</strong> <a href="{{ url_for('static', filename='uploads/' + post.attached_files) }}">{{ post.attached_files }}</a></p>
+    {% endif %}
+
+    {% if current_user.role == "teacher" %}
+        <h3 class="mt-4">Сданные работы студентов</h3>
+        <ul class="list-group">
+            {% for submission in submissions %}
+                <li class="list-group-item">
+                    <strong>Студент:</strong> {{ submission.student_id }}
+                    <br>
+                    <strong>Дата сдачи:</strong> {{ submission.submitted_at.strftime("%Y-%m-%d %H:%M") }}
+                    <br>
+                    {% if submission.report_files %}
+                        <strong>Файл отчета:</strong> <a href="{{ url_for('static', filename='uploads/' + submission.report_files) }}">{{ submission.report_files }}</a>
+                    {% endif %}
+                    {% if submission.git_links %}
+                        <br><strong>Git:</strong> <a href="{{ submission.git_links }}">{{ submission.git_links }}</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <form method="POST">
+            <button class="btn btn-success mt-3">Прикрепить отчет</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

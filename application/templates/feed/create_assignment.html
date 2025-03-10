@@ -1,0 +1,76 @@
+{% extends "main/base.html" %}
+
+{% block title %}Создание задания{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center g-4">
+        <div class="card task-form-card shadow-sm">
+            <div class="card-body p-3 p-md-4">
+                <h1 class="mb-4 text-center h3 fw-bold text-primary"> Создание нового задания </h1>
+                    <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Название задания</label>
+                            {{ form.caption(class="form-control" + (" is-invalid" if form.caption.errors else ""), placeholder="Введите название") }}
+                            {% for error in form.caption.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fs-5 mb-2">Описание задания</label>
+                            {{ form.body(class="form-control" + (" is-invalid" if form.body.errors else ""),
+                                rows=4, placeholder="Детальное описание задания") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.body.errors %}{{ error }}{% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fs-5 mb-2">Срок выполнения</label>
+                            <div class="input-group">
+                                {{ form.due_date(class="form-control datetimepicker-input" + (" is-invalid" if form.due_date.errors else ""),
+                                    placeholder="Выберите дату и время") }}
+                                <span class="input-group-text bg-white">
+                                    <i class="fas fa-calendar-alt text-secondary"></i>
+                                </span>
+                            </div>
+                            <div class="invalid-feedback">
+                                {% for error in form.due_date.errors %}{{ error }}{% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fs-5 mb-2">Для групп</label>
+                            {{ form.student_groups(class="form-select form-select-lg" + (" is-invalid" if form.student_groups.errors else ""),
+                                size=3) }}
+                            <div class="invalid-feedback">
+                                {% for error in form.student_groups.errors %}{{ error }}{% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="form-label fs-5 mb-2">Прикрепленные файлы</label>
+                            {{ form.attached_files(class="form-control" + (" is-invalid" if form.attached_files.errors else "")) }}
+                            <div class="form-text mt-2">
+                                Максимальный размер файла: 25MB. Допустимые форматы: PDF, DOCX, PNG, JPG, JPEG, ZIP
+                            </div>
+                            <div class="invalid-feedback">
+                                {% for error in form.attached_files.errors %}{{ error }}{% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 fw-semibold">
+                                <i class="fas fa-plus-circle me-2"></i>
+                                Создать задание
+                            </button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

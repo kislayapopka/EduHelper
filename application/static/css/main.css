@@ -7,15 +7,42 @@
 
 .header {
     position: sticky;
+    z-index: 1000;
+    background: white;
     top: 0;
 }
 
 .content {
-    max-width: 1100px;
     margin: 0 auto;
     padding: 40px 20px;
-    flex: 1 1 auto;
 }
 
 .footer {
+}
+
+.task-form-card {
+    border-radius: 12px;
+    margin-top: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+
+.card-body {
+    padding: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .card-body {
+        padding: 2rem;
+    }
+}
+
+.form-label {
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.invalid-feedback {
+    margin-top: 0.25rem;
 }
