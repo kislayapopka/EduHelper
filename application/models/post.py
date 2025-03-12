@@ -3,26 +3,41 @@ from ..extensions import db
 
 
 class Post(db.Model):
+    __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+
+    date_created = db.Column(db.DateTime, default=datetime.now())
     due_date = db.Column(db.DateTime)
     caption = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=True)
     is_info = db.Column(db.Boolean, default=False)
 
-    task_attachments = db.relationship('PostAttachment', backref='post', lazy=True)
-    submissions = db.relationship('Submission', backref='post', lazy=True)
+    post_attachments = db.relationship(
+        'PostAttachment',
+        backref='post',
+        lazy=True,
+        cascade='all, delete-orphan',
+    )
+    submissions = db.relationship(
+        'Submission',
+        backref='post',
+        lazy=True,
+        cascade='all, delete-orphan',
+    )
 
 
 class Submission(db.Model):
+    __tablename__ = 'submission'
     id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False, index=True)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    submitted_at = db.Column(db.DateTime, default=datetime.now())
     links = db.Column(db.Text, nullable=True)
 
-    response_attachments = db.relationship(
+    submission_attachments = db.relationship(
         'SubmissionAttachment',
         backref='submission',
         lazy=True,
@@ -30,15 +45,44 @@ class Submission(db.Model):
     )
 
 
+class Course(db.Model):
+    __tablename__ = 'course'
+    id = db.Column(db.Integer, primary_key=True)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    code = db.Column(db.String(6), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now())
+
+    posts = db.relationship(
+        'Post',
+        backref='course',
+        lazy=True,
+        cascade='all, delete-orphan'
+    )
+    users = db.relationship(
+        'User',
+        backref='course',
+        lazy=True
+    )
+
+""" Relationship tables for database """
+
+# One2Many relation table
 class PostAttachment(db.Model):
+    __tablename__ = 'post_attachment'
     id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False, index=True)
+
     file_path = db.Column(db.Text, nullable=False)
     filename = db.Column(db.String(255), nullable=False)
 
 
+# One2Many relation table
 class SubmissionAttachment(db.Model):
+    __tablename__ = 'submission_attachment'
     id = db.Column(db.Integer, primary_key=True)
     submission_id = db.Column(db.Integer, db.ForeignKey('submission.id'), nullable=False)
+
     file_path = db.Column(db.String(500), nullable=False)
     filename = db.Column(db.String(255), nullable=False)

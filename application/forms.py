@@ -38,5 +38,13 @@ class PostForm(FlaskForm):
     due_date = DateTimeField("Срок выполнения", format="%Y-%m-%d %H:%M", validators=[DataRequired()])
     attached_files = MultipleFileField("Прикрепленные файлы", validators=[FileAllowed(
         ['pdf', 'docx', 'png', 'jpg', 'jpeg', 'zip'], "Недопустимый формат файла!")])
-    student_groups = SelectMultipleField("Выберите группы студентов", coerce=int)
+    student_groups = SelectMultipleField("Выберите группы студентов", coerce=int, validators=[DataRequired()])
     submit = SubmitField("Создать задание")
+
+class JoinCourseForm(FlaskForm):
+    code = StringField("Введите уникальный код курса", validators=[DataRequired()])
+    submit = SubmitField("Присоединиться к курсу")
+
+class CreateCourseForm(FlaskForm):
+    name = StringField("Введите название курса", validators=[DataRequired()])
+    submit = SubmitField("Создать новый курс")

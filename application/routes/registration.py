@@ -11,7 +11,7 @@ registration = Blueprint('registration', __name__)
 def index():
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
         user = User(email=form.email.data,
                     name=form.name.data,
                     surname=form.surname.data,

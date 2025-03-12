@@ -2,17 +2,45 @@
 {% block title %} Лента заданий {% endblock %}
 {% block content %}
 <div class="container mt-4">
-    <h2>Лента заданий</h2>
-    {% if current_user.role == "teacher" %}
-        <a href="{{ url_for('feed.create_assignment') }}" class="btn btn-primary">Создать задание</a>
-    {% endif %}
+    <div id="courseCarousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Добавить курс</h5>
+                        {% if current_user.role == "student" %}
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#joinCourseModal">
+                                Подключиться к курсу
+                            </button>
+                        {% elif current_user.role == "teacher" %}
+                           <button class="btn btn-primary" data-toggle="modal" href="#createCourseModal">
+                                Создать новый курс
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#courseCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Предыдущий</span>
+        </a>
+        <a class="carousel-control-next" href="#courseCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Следующий</span>
+        </a>
+    </div>
+
+
+
+    <!-- Лента публикаций -->
     <ul class="list-group mt-3">
+        <h2>Лента заданий</h2>
         {% for post in posts %}
             <li class="list-group-item">
                 <h5><a href="{{ url_for('feed.assignment_detail', post_id=post.id) }}">{{ post.caption }}</a></h5>
                 <p>{{ post.body[:100] }}...</p>
-                <small>Дата публикации: {{ post.date_created.strftime("%Y-%m-%d") }}</small>
-                <br>
+                <small>Дата публикации: {{ post.date_created.strftime("%Y-%m-%d") }}</small><br />
                 <small>Срок выполнения: {{ post.due_date.strftime("%Y-%m-%d %H:%M") }}</small>
             </li>
         {% endfor %}
