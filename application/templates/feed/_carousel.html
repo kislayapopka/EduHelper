@@ -1,0 +1,40 @@
+<div id="carouselCourse" class="carousel carousel-dark slide" data-bs-ride="false" data-bs-interval="false">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">В списке нет нужного курса?</h5>
+                    {% if current_user.role == "student" %}
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#joinCourseModal">
+                            Подключиться к существующему
+                        </button>
+                    {% elif current_user.role == "teacher" %}
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCourseModal">
+                            Создать новый
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% for course in courses %}
+        <div class="carousel-item">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.name }}</h5>
+                    <p class="card-text">Преподаватель: </p>
+                    <p class="card-text">{{ course.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselCourse" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Предыдущий</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselCourse" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Следующий</span>
+    </button>
+</div>

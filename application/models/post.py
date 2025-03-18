@@ -50,8 +50,9 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    code = db.Column(db.String(6), unique=True, nullable=False)
+    code = db.Column(db.String(8), unique=True, nullable=False)
     name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
 
     posts = db.relationship(

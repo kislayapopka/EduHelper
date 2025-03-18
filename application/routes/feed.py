@@ -1,6 +1,8 @@
 import os
+import string
+from random import choices
 
-from flask import Blueprint, render_template, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, request
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from application.config import Config
@@ -10,6 +12,10 @@ from application.forms import PostForm, JoinCourseForm, CreateCourseForm
 
 
 feed = Blueprint('feed', __name__)
+
+
+def generate_course_code():
+    return "".join(choices(string.ascii_uppercase + string.digits, k=8))
 
 
 @feed.route('/join_course', methods=['GET', 'POST'])
@@ -25,22 +31,28 @@ def join_course():
     return jsonify({"message": "Вы успешно подключились к курсу!"}), 200
 
 
-@feed.route('/create_course', methods=['GET', 'POST'])
+@feed.route('/create_course', methods=['POST'])
+@login_required
 def create_course():
-    form = CreateCourseForm()
+    form = CreateCourseForm(request.form)
     if form.validate_on_submit():
         new_course = Course(
-            name=form.name.data
+            name=form.name.data,
+            description=form.description.data,
+            teacher_id=current_user.id,
+            code=generate_course_code()
         )
         db.session.add(new_course)
         db.session.commit()
-    return jsonify({"message": "Курс успешно создан!"}), 200
+        return jsonify({"message": "Курс успешно создан!"}), 200
+    return jsonify({"message": "Ошибка валидации", "errors": form.errors}), 400
 
 
 @feed.route('/assignments')
 @login_required
 def assignments():
     form = CreateCourseForm()
+    post_form = PostForm()
     if current_user.role == 'student':
         courses_ids = [c.id for c in current_user.enrolled_courses]
         posts = Post.query.join(Post.course).filter(
@@ -50,7 +62,9 @@ def assignments():
         posts = Post.query.order_by(
             Post.date_created.desc()).all()
 
-    return render_template("feed/assignments.html", posts=posts, form=form)
+    courses = Course.query.filter_by(teacher_id=current_user.id).all()
+
+    return render_template("feed/assignments.html", posts=posts, courses=courses, form=form, post_form=post_form)
 
 
 @feed.route('/assignments/<int:post_id>')
@@ -62,7 +76,7 @@ def assignment_detail(post_id):
     return render_template("feed/assignment_detail.html", post=post, submissions=submissions)
 
 
-@feed.route("/assignments/new", methods=["GET", "POST"])
+@feed.route("/create_assignment", methods=["GET", "POST"])
 @login_required
 def create_assignment():
     if current_user.role != "teacher":
@@ -71,7 +85,7 @@ def create_assignment():
 
     form = PostForm()
     form.student_groups.choices = [(c.id, c.name)
-                            for c in Course.query.filter_by(teacher_id=current_user.id)]
+                                   for c in Course.query.filter_by(teacher_id=current_user.id)]
 
     if form.validate_on_submit():
         new_post = Post(
@@ -94,7 +108,12 @@ def create_assignment():
                     db.session.add(attachment)
 
         db.session.commit()
+
+        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({"success": True, "message": "Задание успешно создано!"})
+
         flash("Задание успешно создано!", "success")
         return redirect(url_for("feed.assignments"))
 
     return render_template("feed/create_assignment.html", form=form)
+

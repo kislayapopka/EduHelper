@@ -1,0 +1,57 @@
+<div class="modal fade" id="createCourseModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Создание курса</h5>
+      </div>
+      <div class="modal-body">
+        <form id="createCourseForm" method="POST">
+          {{ form.hidden_tag() }}
+          <div class="form-group">
+            {{ form.name.label }}
+            {{ form.name(class="form-control", required=True) }}
+          </div>
+          <div class="form-group">
+            {{ form.description.label }}
+            {{ form.description(class="form-control") }}
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+        <button type="button" id="submitCourseForm" class="btn btn-primary">Создать курс</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+$(document).ready(function() {
+    $('#submitCourseForm').click(function(e) {
+        e.preventDefault();
+
+        const formData = $('#createCourseForm').serialize();
+        console.log("Form Data:", formData);
+
+        $.ajax({
+            url: "{{ url_for('feed.create_course') }}",
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                $('#createCourseModal').modal('hide');
+                alert(response.message);
+                location.reload();
+            },
+            error: function(jqXHR) {
+                console.log("Error:", jqXHR.responseText);
+                const errors = jqXHR.response;
+                for (const [field, messages] of Object.entries(errors)) {
+                    $(`#${field}`).addClass('is-invalid');
+                    $(`#${field}-feedback`).text(messages[0]);
+                }
+            }
+        });
+    });
+});
+
+</script>

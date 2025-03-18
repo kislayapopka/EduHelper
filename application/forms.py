@@ -41,10 +41,23 @@ class PostForm(FlaskForm):
     student_groups = SelectMultipleField("Выберите группы студентов", coerce=int, validators=[DataRequired()])
     submit = SubmitField("Создать задание")
 
+
 class JoinCourseForm(FlaskForm):
     code = StringField("Введите уникальный код курса", validators=[DataRequired()])
     submit = SubmitField("Присоединиться к курсу")
 
+
 class CreateCourseForm(FlaskForm):
-    name = StringField("Введите название курса", validators=[DataRequired()])
-    submit = SubmitField("Создать новый курс")
+    name = StringField(
+        "Название курса",
+        validators=[DataRequired()],
+        render_kw={"class": "form-control", "placeholder": "Введите название курса"}
+    )
+    description = TextAreaField(
+        "Описание курса (опционально)",
+        render_kw={"class": "form-control", "rows": 3}
+    )
+    submit = SubmitField(
+        "Создать курс",
+        render_kw={"class": "btn btn-primary"}
+    )

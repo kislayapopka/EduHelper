@@ -46,3 +46,42 @@
 .invalid-feedback {
     margin-top: 0.25rem;
 }
+
+#carouselCourse {
+    position: relative;
+    max-width: 40vw;
+}
+
+#carouselCourse .card {
+    width: 40vw;
+    height: 300px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+}
+
+#carouselCourse .card-body {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+#carouselCourse .card-text {
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+#carouselCourse .carousel-control-prev, #carouselCourse .carousel-control-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#carouselCourse .carousel-control-prev {
+    left: -20px;
+}
+
+#carouselCourse .carousel-control-next {
+    right: -20px;
+}
