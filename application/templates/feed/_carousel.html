@@ -17,7 +17,7 @@
             </div>
         </div>
         {% for course in courses %}
-        <div class="carousel-item">
+        <div class="carousel-item" data-course-id="{{ course.id }}">
             <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">{{ course.name }}</h5>

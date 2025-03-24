@@ -76,7 +76,7 @@ def assignment_detail(post_id):
     return render_template("feed/assignment_detail.html", post=post, submissions=submissions)
 
 
-@feed.route("/create_assignment", methods=["GET", "POST"])
+@feed.route("/create_assignment", methods=["POST"])
 @login_required
 def create_assignment():
     if current_user.role != "teacher":
@@ -84,12 +84,12 @@ def create_assignment():
         return redirect(url_for("feed.assignments"))
 
     form = PostForm()
-    form.student_groups.choices = [(c.id, c.name)
-                                   for c in Course.query.filter_by(teacher_id=current_user.id)]
 
     if form.validate_on_submit():
+        course_id = form.course_id.data
         new_post = Post(
             user_id=current_user.id,
+            course_id=course_id,
             caption=form.caption.data,
             body=form.body.data,
             due_date=form.due_date.data
@@ -109,11 +109,5 @@ def create_assignment():
 
         db.session.commit()
 
-        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({"success": True, "message": "Задание успешно создано!"})
-
-        flash("Задание успешно создано!", "success")
-        return redirect(url_for("feed.assignments"))
-
-    return render_template("feed/create_assignment.html", form=form)
-
+        return jsonify({"message": "Задание успешно добавлено!"}), 200
+    return jsonify({"message": "Ошибка валидации", "errors": form.errors}), 400

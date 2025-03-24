@@ -3,7 +3,7 @@ from flask_wtf.file import FileAllowed
 from wtforms.fields.choices import SelectMultipleField
 from wtforms.fields.datetime import DateTimeField
 from wtforms.fields.simple import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, \
-    MultipleFileField
+    MultipleFileField, HiddenField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 
 from application.models.user import User
@@ -33,12 +33,12 @@ class LoginForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
+    course_id = HiddenField("Course ID")
     caption = StringField("Название задания", validators=[DataRequired()])
     body = TextAreaField("Описание задания", validators=[DataRequired()])
     due_date = DateTimeField("Срок выполнения", format="%Y-%m-%d %H:%M", validators=[DataRequired()])
     attached_files = MultipleFileField("Прикрепленные файлы", validators=[FileAllowed(
         ['pdf', 'docx', 'png', 'jpg', 'jpeg', 'zip'], "Недопустимый формат файла!")])
-    student_groups = SelectMultipleField("Выберите группы студентов", coerce=int, validators=[DataRequired()])
     submit = SubmitField("Создать задание")
 
 
