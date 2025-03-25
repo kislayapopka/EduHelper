@@ -38,3 +38,43 @@
         <span class="visually-hidden">Следующий</span>
     </button>
 </div>
+<script>
+    $(document).ready(function() {
+        $('.carousel-item').click(function (e) {
+            e.preventDefault();
+            const courseId = $(this).attr('data-course-id');
+
+            $('.carousel-item').removeClass('active');
+            $(this).addClass('active');
+
+            $.ajax({
+                url: "{{ url_for('feed.get_posts_by_course_id') }}",
+                type: "GET",
+                data: {courseId: courseId},
+                success: function (response) {
+                    updatePostList(response);
+                },
+                error: function (jqXHR) {
+                    console.log("Error:", jqXHR.responseText);
+                }
+            });
+        });
+
+        function updatePostList(posts) {
+            const postList = $('#post-list');
+            postList.empty();
+
+            posts.forEach(post => {
+                const postHTML = `
+                    <li class="list-group-item">
+                        <h5><a href="/assignment_detail/${post.id}">${post.caption}</a></h5>
+                        <p>${post.body.substring(0, 100)}...</p>
+                        <small>Дата публикации: ${post.date_created}</small><br />
+                        <small>Срок выполнения: ${post.due_date}</small>
+                    </li>
+                `;
+                postList.append(postHTML);
+            });
+        }
+    });
+</script>

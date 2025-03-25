@@ -76,6 +76,24 @@ def assignment_detail(post_id):
     return render_template("feed/assignment_detail.html", post=post, submissions=submissions)
 
 
+@feed.route('/get_posts_by_course_id', methods=['GET'])
+def get_posts_by_course_id():
+    course_id = request.args.get('courseId')
+    posts = Post.query.filter_by(course_id=course_id).all()
+
+    posts_json = []
+    for post in posts:
+        posts_json.append({
+            'id': post.id,
+            'caption': post.caption,
+            'body': post.body,
+            'date_created': post.date_created.strftime("%Y-%m-%d"),
+            'due_date': post.due_date.strftime("%Y-%m-%d %H:%M")
+        })
+
+    return jsonify(posts_json)
+
+
 @feed.route("/create_assignment", methods=["POST"])
 @login_required
 def create_assignment():

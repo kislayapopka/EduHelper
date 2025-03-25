@@ -6,8 +6,9 @@
 
         {% include "feed/_modal.html" %}
 
-        <ul class="list-group mt-3">
-            <form id="newPostForm" method="POST" action="/create_assignment" enctype="multipart/form-data">
+        <ul id="post-list" class="list-group mt-3">
+        {% if current_user.role == "teacher" %}
+           <form id="newPostForm" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="course_id" id="course_id_input">
                 {{ post_form.hidden_tag() }}
                 <li class="list-group-item">
@@ -36,15 +37,7 @@
                     </div>
                 </li>
             </form>
-            <h2>Лента заданий</h2>
-            {% for post in posts %}
-                <li class="list-group-item">
-                    <h5><a href="{{ url_for('feed.assignment_detail', post_id=post.id) }}">{{ post.caption }}</a></h5>
-                    <p>{{ post.body[:100] }}...</p>
-                    <small>Дата публикации: {{ post.date_created.strftime("%Y-%m-%d") }}</small><br />
-                    <small>Срок выполнения: {{ post.due_date.strftime("%Y-%m-%d %H:%M") }}</small>
-                </li>
-            {% endfor %}
+            {% endif %}
         </ul>
     </div>
 {% endblock %}

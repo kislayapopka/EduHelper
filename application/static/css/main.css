@@ -47,6 +47,11 @@
     margin-top: 0.25rem;
 }
 
+.card-body:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
 #carouselCourse {
     position: relative;
     max-width: 40vw;
