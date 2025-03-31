@@ -20,7 +20,7 @@ def index():
         try:
             db.session.add(user)
             db.session.commit()
-            flash(f"Регистрация была выполнена успешно!", "success")
+            flash("Регистрация была выполнена успешно!", "success")
             return redirect(url_for('login.index'))
         except Exception as e:
             print(str(e))

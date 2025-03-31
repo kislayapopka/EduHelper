@@ -25,6 +25,21 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Данный адрес электронной почты уже есть в системе')
 
 
+class UserForm(FlaskForm):
+    name = StringField('Имя пользователя', validators=[DataRequired(), Length(min=2, max=50)])
+    surname = StringField('Фамилия пользователя', validators=[DataRequired(), Length(min=2, max=50)])
+    patronymic = StringField('Отчество пользователя (если имеется)', validators=[Length(min=2, max=50)])
+    email = StringField('Адрес электронной почты', validators=[DataRequired(), Length(min=2, max=50)])
+    role = StringField('Роль пользователя', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    submit = SubmitField('Зарегистрироваться')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('Данный адрес электронной почты уже есть в системе')
+
+
 class LoginForm(FlaskForm):
     email = StringField('Адрес электронной почты', validators=[DataRequired(), Length(min=2, max=50)])
     password = PasswordField('Пароль', validators=[DataRequired()])
@@ -39,12 +54,38 @@ class PostForm(FlaskForm):
     due_date = DateTimeField("Срок выполнения", format="%Y-%m-%d %H:%M", validators=[DataRequired()])
     attached_files = MultipleFileField("Прикрепленные файлы", validators=[FileAllowed(
         ['pdf', 'docx', 'png', 'jpg', 'jpeg', 'zip'], "Недопустимый формат файла!")])
-    submit = SubmitField("Создать задание")
+    submit = SubmitField("Создать публикацию")
+
+
+class EditPostForm(FlaskForm):
+    course_id = HiddenField("Course ID")
+    caption = StringField('Заголовок', validators=[DataRequired()])
+    body = TextAreaField('Текст', validators=[DataRequired()])
+    due_date = DateTimeField("Срок выполнения", format="%Y-%m-%d %H:%M", validators=[DataRequired()])
+    attached_files = MultipleFileField("Прикрепленные файлы", validators=[FileAllowed(
+        ['pdf', 'docx', 'png', 'jpg', 'jpeg', 'zip'], "Недопустимый формат файла!")])
+    submit = SubmitField("Изменить публикацию")
+
+
+class SubmissionForm(FlaskForm):
+    submission_id = HiddenField("Submission ID")
+    post_id = HiddenField("Post ID")
+    user_id = HiddenField("User ID")
+    attached_files = MultipleFileField("Прикрепленные файлы", validators=[FileAllowed(
+        ['pdf', 'docx', 'png', 'jpg', 'jpeg', 'zip'], "Недопустимый формат файла!")])
+    submit = SubmitField("Добавить выполнение")
 
 
 class JoinCourseForm(FlaskForm):
-    code = StringField("Введите уникальный код курса", validators=[DataRequired()])
-    submit = SubmitField("Присоединиться к курсу")
+    code = StringField(
+        "Код курса",
+        validators=[DataRequired()],
+        render_kw={"class": "form-control", "placeholder": "Введите уникальный код курса"}
+    )
+    submit = SubmitField(
+        "Присоединиться к курсу",
+        render_kw={"class": "btn btn-primary"}
+    )
 
 
 class CreateCourseForm(FlaskForm):

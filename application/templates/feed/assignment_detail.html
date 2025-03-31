@@ -2,38 +2,114 @@
 {% block title %} {{ post.caption }} {% endblock %}
 {% block content %}
 <div class="container mt-4">
-    <h2>{{ post.caption }}</h2>
-    <p>{{ post.body }}</p>
-    <small>Дата публикации: {{ post.date_created.strftime("%Y-%m-%d") }}</small>
-    <br>
-    <small>Срок выполнения: {{ post.due_date.strftime("%Y-%m-%d %H:%M") }}</small>
-    
-    {% if post.attached_files %}
-        <p><strong>Прикрепленные файлы:</strong> <a href="{{ url_for('static', filename='uploads/' + post.attached_files) }}">{{ post.attached_files }}</a></p>
-    {% endif %}
+    {% include 'feed/_assignmentModal.html' %}
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="card-title">{{ post.caption }}</h2>
+                {% if current_user.role == "teacher" %}
+                    <button class="btn btn-sm btn-secondary edit-post-btn"
+                            data-id="{{ post.id }}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editPostModal">
+                        <i class="bi bi-pencil"></i>
+                        Изменить
+                    </button>
+                    <form action="{{ url_for('feed.delete_post', post_id=post.id) }}" method="post">
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                {% endif %}
+            </div>
+            <p class="card-text">{{ post.body }}</p>
 
-    {% if current_user.role == "teacher" %}
-        <h3 class="mt-4">Сданные работы студентов</h3>
-        <ul class="list-group">
-            {% for submission in submissions %}
-                <li class="list-group-item">
-                    <strong>Студент:</strong> {{ submission.student_id }}
-                    <br>
-                    <strong>Дата сдачи:</strong> {{ submission.submitted_at.strftime("%Y-%m-%d %H:%M") }}
-                    <br>
-                    {% if submission.report_files %}
-                        <strong>Файл отчета:</strong> <a href="{{ url_for('static', filename='uploads/' + submission.report_files) }}">{{ submission.report_files }}</a>
-                    {% endif %}
-                    {% if submission.git_links %}
-                        <br><strong>Git:</strong> <a href="{{ submission.git_links }}">{{ submission.git_links }}</a>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <form method="POST">
-            <button class="btn btn-success mt-3">Прикрепить отчет</button>
-        </form>
-    {% endif %}
+            <div class="mb-3">
+                <small class="text-muted">
+                    Дата публикации: {{ post.date_created.strftime("%Y-%m-%d") }}
+                </small><br>
+                <small class="text-muted">
+                    Срок выполнения: {{ post.due_date.strftime("%Y-%m-%d %H:%M") }}
+                </small>
+            </div>
+
+            {% if post.attached_files %}
+            <div class="mb-4">
+                <h5>Материалы задания:</h5>
+                <div class="list-group">
+                    {% for file in post.attached_files.split(';') %}
+                    <a href="{{ url_for('static', filename='uploads/' + file) }}"
+                       class="list-group-item list-group-item-action">
+                       {{ file }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if current_user.role == "teacher" %}
+            <div class="teacher-section">
+                <h3>Работы студентов</h3>
+                <div class="accordion" id="submissionsAccordion">
+                    {% for submission in submissions %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapse{{ submission.id }}">
+                                {{ submission.student.username }} -
+                                {{ submission.submitted_at.strftime("%d.%m.%Y %H:%M") }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ submission.id }}"
+                             class="accordion-collapse collapse"
+                             data-bs-parent="#submissionsAccordion">
+                            <div class="accordion-body">
+                                {% if submission.submission_attachments %}
+                                <div class="mb-3">
+                                    <h6>Прикрепленные файлы:</h6>
+                                    <div class="row">
+                                        {% for attachment in submission.submission_attachments %}
+                                        <div class="col-md-4 mb-2">
+                                            <a href="{{ url_for('static', filename='uploads/' + attachment.file_path) }}"
+                                               class="btn btn-outline-primary w-100 text-truncate">
+                                               {{ attachment.filename }}
+                                            </a>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">Работы еще не сданы</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% else %}
+            <div class="student-submission">
+                <h4>Сдать работу</h4>
+                <form method="POST" enctype="multipart/form-data">
+                    {{ submission_form.hidden_tag() }}
+                    {{ submission_form.post_id(value=post.id) }}
+                    {{ submission_form.user_id(value=current_user.id) }}
+
+                    <div class="mb-3">
+                        {{ submission_form.attached_files.label }}
+                        {{ submission_form.attached_files(class="form-control") }}
+                        <div class="form-text">
+                            Макс. размер файла: 25MB. Форматы: PDF, DOCX, PNG, JPG, ZIP
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        {{ submission_form.submit(class="btn btn-success") }}
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}

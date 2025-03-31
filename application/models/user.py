@@ -31,5 +31,7 @@ class User(db.Model, UserMixin):
     submissions = db.relationship(
         'Submission',
         backref='student',
-        lazy=True
+        lazy=True,
+        cascade='all, delete-orphan',
+        passive_deletes=True
     )

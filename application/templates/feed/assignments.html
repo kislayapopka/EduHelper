@@ -6,9 +6,12 @@
 
         {% include "feed/_modal.html" %}
 
-        <ul id="post-list" class="list-group mt-3">
+        <ul id="newPostFormList" class="list-group-item mt-3">
         {% if current_user.role == "teacher" %}
-           <form id="newPostForm" method="POST" enctype="multipart/form-data">
+            <form id="newPostForm"
+                  method="POST"
+                  action="{{ url_for('feed.create_assignment') }}"
+                  enctype="multipart/form-data">
                 <input type="hidden" name="course_id" id="course_id_input">
                 {{ post_form.hidden_tag() }}
                 <li class="list-group-item">
@@ -32,12 +35,20 @@
                         </div>
                     </div>
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary" id="submitButton">Создать задание</button>
-                        <div id="loadingIndicator" style="display: none;">Загрузка...</div>
+                        <button type="submit" class="btn btn-primary" id="submitButton">
+                            Создать задание
+                        </button>
+                        <div id="loadingIndicator" style="display: none;">
+                            Загрузка...
+                        </div>
                     </div>
                 </li>
             </form>
-            {% endif %}
+        {% endif %}
+        </ul>
+
+        <ul id="post-list" class="list-group mt-3">
+
         </ul>
     </div>
 {% endblock %}

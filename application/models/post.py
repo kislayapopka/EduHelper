@@ -32,7 +32,7 @@ class Submission(db.Model):
     __tablename__ = 'submission'
     id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False, index=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
 
     submitted_at = db.Column(db.DateTime, default=datetime.now())
     links = db.Column(db.Text, nullable=True)
@@ -61,10 +61,11 @@ class Course(db.Model):
         lazy=True,
         cascade='all, delete-orphan'
     )
-    users = db.relationship(
-        'User',
+    course_users = db.relationship(
+        'CourseUser',
         backref='course',
-        lazy=True
+        lazy=True,
+        cascade='all, delete-orphan'
     )
 
 """ Relationship tables for database """
@@ -87,3 +88,11 @@ class SubmissionAttachment(db.Model):
 
     file_path = db.Column(db.String(500), nullable=False)
     filename = db.Column(db.String(255), nullable=False)
+
+
+# One2Many relation table
+class CourseUser(db.Model):
+    __tablename__ = 'course_users'
+    id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

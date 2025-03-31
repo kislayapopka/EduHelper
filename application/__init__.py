@@ -1,15 +1,15 @@
 import os
 
 from flask import Flask
-from .extensions import db, migrate, login_manager
+from application.extensions import db, migrate, login_manager
 from .config import Config
 
 # For every new created route import needs to be added
-from .routes.user import user
-from .routes.home import home
-from .routes.feed import feed
-from .routes.login import login
-from .routes.registration import registration
+from application.routes.admin import admin
+from application.routes.home import home
+from application.routes.feed import feed
+from application.routes.login import login
+from application.routes.registration import registration
 
 
 # Creating entry point of the project
@@ -23,7 +23,7 @@ def create_app(config_class=Config):
 
     # Registration of custom routes
     # First we need to import blueprint from routes
-    app.register_blueprint(user)
+    app.register_blueprint(admin)
     app.register_blueprint(home)
     app.register_blueprint(login)
     app.register_blueprint(registration)

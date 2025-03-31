@@ -24,6 +24,29 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="joinCourseModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Подключение к курсу</h5>
+      </div>
+      <div class="modal-body">
+        <form id="joinCourseForm" method="POST">
+          {{ join_form.hidden_tag() }}
+          <div class="form-group">
+            {{ join_form.code.label }}
+            {{ join_form.code(class="form-control", required=True) }}
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+        <button type="button" id="submitJoinCourseForm" class="btn btn-primary">Подключиться</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 
 $(document).ready(function() {
@@ -48,6 +71,38 @@ $(document).ready(function() {
                 for (const [field, messages] of Object.entries(errors)) {
                     $(`#${field}`).addClass('is-invalid');
                     $(`#${field}-feedback`).text(messages[0]);
+                }
+            }
+        });
+    });
+});
+
+$(document).ready(function() {
+    $('#submitJoinCourseForm').click(function(e) {
+        e.preventDefault();
+
+        const formData = $('#joinCourseForm').serialize();
+        console.log("Form Data:", formData);
+
+        $.ajax({
+            url: "{{ url_for('feed.join_course') }}",
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                $('#joinCourseModal').modal('hide');
+                alert(response.message);
+                location.reload();
+            },
+            error: function(jqXHR) {
+                console.log("Error:", jqXHR.responseText);
+                const errors = jqXHR.responseJSON;
+                if (errors) {
+                    for (const [field, messages] of Object.entries(errors)) {
+                        $(`#${field}`).addClass('is-invalid');
+                        $(`#${field}-feedback`).text(messages[0]);
+                    }
+                } else {
+                    alert('Произошла ошибка');
                 }
             }
         });

@@ -1,0 +1,80 @@
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Изменить элемент БД</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="editUserForm">
+                    <input type="hidden" id="userId" name="id">
+                    <div class="form-group">
+                        <label for="name">Имя</label>
+                        <input type="text" id="name" name="name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="surname">Фамилия</label>
+                        <input type="text" id="surname" name="surname" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Роль</label>
+                        <input type="text" id="role" name="role" class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" id="submitEditUserForm" class="btn btn-primary">Сохранить изменения</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $(document).on('click', '.edit-user-btn', function(e) {
+            const userId = $(this).data('id');
+            if (userId) {
+                $('#userId').val(userId);
+                console.log(userId);
+            } else {
+                console.error("ID пользователя не получен");
+            }
+
+            $.ajax({
+                url: `/admin_panel/get_user/${userId}`,
+                type: 'GET',
+                success: function(data) {
+                    $('#userId').val(data.id);
+                    $('#name').val(data.name);
+                    $('#surname').val(data.surname);
+                    $('#email').val(data.email);
+                    $('#role').val(data.role);
+                },
+                error: function(jqXHR) {
+                    console.error("Ошибка получения данных пользователя:", jqXHR.responseText);
+                }
+            });
+        });
+    });
+
+    $('#submitEditUserForm').click(function(e) {
+        e.preventDefault();
+        const formData = $('#editUserForm').serialize();
+
+        $.ajax({
+            url: "{{ url_for('admin.update_user') }}",
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function(jqXHR) {
+                console.error("Ошибка обновления данных:", jqXHR.responseText);
+            }
+        });
+    });
+</script>

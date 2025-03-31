@@ -5,7 +5,7 @@
                 <div class="card-body">
                     <h5 class="card-title">В списке нет нужного курса?</h5>
                     {% if current_user.role == "student" %}
-                        <button class="btn btn-primary" data-toggle="modal" data-target="#joinCourseModal">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#joinCourseModal">
                             Подключиться к существующему
                         </button>
                     {% elif current_user.role == "teacher" %}
@@ -23,6 +23,10 @@
                     <h5 class="card-title">{{ course.name }}</h5>
                     <p class="card-text">Преподаватель: </p>
                     <p class="card-text">{{ course.description }}</p>
+                    <button class="btn btn-sm btn-success copy-code" data-code="{{ course.code }}">
+                        Код курса: {{ course.code }}
+                    </button>
+                    <div class="copy-message"></div>
                 </div>
             </div>
         </div>
@@ -43,6 +47,10 @@
         $('.carousel-item').click(function (e) {
             e.preventDefault();
             const courseId = $(this).attr('data-course-id');
+            $('#course_id_input').val(courseId);
+            console.log($('#course_id_input'));
+
+            const copyButtons = document.querySelectorAll('.copy-code');
 
             $('.carousel-item').removeClass('active');
             $(this).addClass('active');
@@ -57,6 +65,21 @@
                 error: function (jqXHR) {
                     console.log("Error:", jqXHR.responseText);
                 }
+            });
+
+            copyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const code = button.getAttribute('data-code');
+                    navigator.clipboard.writeText(code).then(() => {
+                        const messageDiv = button.nextElementSibling;
+                        messageDiv.innerText = 'Код скопирован!';
+                        setTimeout(() => {
+                            messageDiv.innerText = '';
+                        }, 2000);
+                    }).catch(error => {
+                        console.error('Ошибка копирования:', error);
+                    });
+                });
             });
         });
 

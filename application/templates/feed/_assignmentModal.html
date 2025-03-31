@@ -1,0 +1,78 @@
+<div class="modal fade" id="editPostModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Редактировать публикацию</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" id="editPostForm" enctype="multipart/form-data">
+                {{ edit_form.hidden_tag() }}
+                <input type="hidden" id="postId" name="post_id" value="{{ post.id }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        {{ edit_form.caption.label }}
+                        {{ edit_form.caption(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ edit_form.body.label }}
+                        {{ edit_form.body(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ edit_form.due_date.label }}
+                        {{ edit_form.due_date(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ edit_form.attached_files.label }}
+                        {{ edit_form.attached_files(class="form-control") }}
+                        <div class="form-text mt-2">
+                            Максимальный размер файла: 25MB. Допустимые форматы: PDF, DOCX, PNG, JPG, JPEG, ZIP
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="submitEditPostForm" class="btn btn-primary">Сохранить изменения</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#editPostModal').on('show.bs.modal', function(e) {
+            const postId = $(e.relatedTarget).data('id');
+            $('#postId').val(postId);
+
+            $.ajax({
+                url: `/assignment_detail/get_post/${postId}`,
+                type: 'GET',
+                success: function(data) {
+                    $('#caption').val(data.caption);
+                    $('#body').val(data.body);
+                    $('#due_date').val(data.due_date);
+                },
+                error: function(jqXHR) {
+                    console.error("Ошибка получения данных публикации:", jqXHR.responseText);
+                }
+            });
+        });
+
+        $('#editPostForm').submit(function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            $.ajax({
+                url: "{{ url_for('feed.update_post') }}",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function() {
+                    window.location.reload();
+                },
+                error: function(jqXHR) {
+                    console.error('Ошибка обновления данных:', jqXHR.responseText);
+                }
+            });
+        });
+    });
+</script>
