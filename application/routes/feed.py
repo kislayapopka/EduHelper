@@ -2,7 +2,7 @@ import os
 import string
 from random import choices
 
-from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, request
+from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, request, current_app
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from application.config import Config
@@ -95,8 +95,8 @@ def assignment_detail(post_id):
 
     if submission_form.validate_on_submit():
         new_submission = Submission(
-            post_id = post.id,
-            student_id = current_user.id,
+            post_id=post.id,
+            student_id=current_user.id,
         )
 
         if submission_form.attached_files.data:
@@ -154,30 +154,42 @@ def create_assignment():
     form = PostForm()
 
     if form.validate_on_submit():
-        course_id = form.course_id.data
-        new_post = Post(
-            user_id=current_user.id,
-            course_id=course_id,
-            caption=form.caption.data,
-            body=form.body.data,
-            due_date=form.due_date.data
-        )
+        try:
+            course_id = form.course_id.data
+            new_post = Post(
+                user_id=current_user.id,
+                course_id=course_id,
+                caption=form.caption.data,
+                body=form.body.data,
+                due_date=form.due_date.data
+            )
 
-        db.session.add(new_post)
+            db.session.add(new_post)
+            db.session.flush()
 
-        if form.attached_files.data:
-            for file in form.attached_files.data:
-                if file:
-                    filename = secure_filename(file.filename)
-                    file_path = os.path.join(Config.UPLOAD_FOLDER, filename)
-                    file.save(file_path)
+            if form.attached_files.data:
+                for file in form.attached_files.data:
+                    if file:
+                        filename = secure_filename(file.filename)
+                        file_path = os.path.join(Config.UPLOAD_FOLDER, filename)
+                        file.save(file_path)
 
-                    attachment = PostAttachment(post_id=new_post.id, file_path=f'uploads/{filename}', filename=filename)
-                    db.session.add(attachment)
+                        attachment = PostAttachment(
+                            post_id=new_post.id,
+                            file_path=f'uploads/{filename}',
+                            filename=filename
+                        )
+                        db.session.add(attachment)
 
-        db.session.commit()
+            db.session.commit()
+            # return jsonify({"message": "Задание успешно добавлено!"}), 200
+            return redirect(url_for('feed.assignment_detail'))
 
-        return jsonify({"message": "Задание успешно добавлено!"}), 200
+        except Exception as e:
+            db.session.rollback()
+            flash("Произошла ошибка при создании задания.", "danger")
+            return redirect(url_for('feed.assignments'))
+
     return jsonify({"message": "Ошибка валидации", "errors": form.errors}), 400
 
 
@@ -202,13 +214,40 @@ def update_post():
     post_id = request.form.get('post_id')
     post = Post.query.get_or_404(post_id)
 
+    if current_user.role != "teacher" or post.user_id != current_user.id:
+        flash("У вас нет прав для редактирования этого задания.", "danger")
+        return redirect(url_for('feed.assignments'))
+
     form = EditPostForm()
+
     if form.validate_on_submit():
-        post.caption = form.caption.data
-        post.body = form.body.data
-        post.due_date = form.due_date.data
-        db.session.commit()
-        return jsonify({'status': 'success'})
+        try:
+            post.caption = form.caption.data
+            post.body = form.body.data
+            post.due_date = form.due_date.data
+
+            if form.attached_files.data:
+                for file in form.attached_files.data:
+                    if file and file.filename:
+                        filename = secure_filename(file.filename)
+                        file_path = os.path.join(Config.UPLOAD_FOLDER, filename)
+
+                        file.save(file_path)
+
+                        attachment = PostAttachment(
+                            post_id=post.id,
+                            file_path=f'uploads/{filename}',
+                            filename=filename
+                        )
+                        db.session.add(attachment)
+
+            db.session.commit()
+            return jsonify({'status': 'success'})
+
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Ошибка обновления: {str(e)}")
+            return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
 
     return jsonify({'error': form.errors}), 400
 
@@ -220,4 +259,4 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.commit()
     flash('Публикация успешно удалена.', 'success')
-    return redirect(url_for('feed.assignment_detail'))
+    return redirect(url_for('feed.assignment_detail', post_id=post_id))

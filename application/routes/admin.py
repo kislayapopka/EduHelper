@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request, jsonify
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from application.extensions import bcrypt, db
 from application.forms import UserForm
@@ -13,6 +13,10 @@ admin = Blueprint('admin', __name__)
 @admin.route('/admin_panel/user_panel')
 @login_required
 def user_panel():
+    if current_user.role != "admin":
+        flash("У вас нет доступа к этой странице.", "danger")
+        return redirect(url_for("feed.assignments"))
+
     user_form = UserForm()
     users = User.query.all()
     return render_template('admin/user_panel.html', form=user_form, users=users)
@@ -83,7 +87,6 @@ def get_user(user_id):
         return jsonify({'error': 'Пользователь не найден'}), 404
 
 
-
 @admin.route('/admin_panel/delete_user/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
@@ -95,4 +98,3 @@ def delete_user(user_id):
     else:
         flash("Пользователь не найден!", "danger")
     return redirect(url_for('admin.user_panel'))
-

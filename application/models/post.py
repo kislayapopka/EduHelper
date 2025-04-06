@@ -68,7 +68,9 @@ class Course(db.Model):
         cascade='all, delete-orphan'
     )
 
+
 """ Relationship tables for database """
+
 
 # One2Many relation table
 class PostAttachment(db.Model):
