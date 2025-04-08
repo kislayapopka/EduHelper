@@ -18,13 +18,17 @@ def user_panel():
         return redirect(url_for("feed.assignments"))
 
     user_form = UserForm()
-    users = User.query.all()
+    users = User.query.filter_by(is_active=True).all()
     return render_template('admin/user_panel.html', form=user_form, users=users)
 
 
 @admin.route('/admin_panel/create_user', methods=['POST'])
 @login_required
 def create_user():
+    if current_user.role != "admin":
+        flash("У вас нет доступа к этой странице.", "danger")
+        return redirect(url_for("feed.assignments"))
+
     user_form = UserForm()
 
     if user_form.validate_on_submit():
@@ -52,6 +56,10 @@ def create_user():
 @admin.route('/admin_panel/update_user', methods=['POST'])
 @login_required
 def update_user():
+    if current_user.role != "admin":
+        flash("У вас нет доступа к этой странице.", "danger")
+        return redirect(url_for("feed.assignments"))
+
     user_id = request.form.get('id')
 
     if not user_id or not user_id.isdigit():
@@ -90,6 +98,10 @@ def get_user(user_id):
 @admin.route('/admin_panel/delete_user/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
+    if current_user.role != "admin":
+        flash("У вас нет доступа к этой странице.", "danger")
+        return redirect(url_for("feed.assignments"))
+
     user = User.query.get(user_id)
     if user:
         db.session.delete(user)
@@ -97,4 +109,23 @@ def delete_user(user_id):
         flash("Пользователь удалён!", "success")
     else:
         flash("Пользователь не найден!", "danger")
+    return redirect(url_for('admin.user_panel'))
+
+
+@admin.route('/admin_panel/logical_delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def logical_delete_user(user_id):
+    if current_user.role != "admin":
+        flash("У вас нет доступа к этой странице.", "danger")
+        return redirect(url_for("feed.assignments"))
+
+    user = User.query.get(user_id)
+
+    if not user:
+        flash("Пользователь не найден", "danger")
+        return redirect(url_for('admin.user_panel'))
+
+    user.is_active = False
+    db.session.commit()
+    flash("Пользователь успешно деактивирован", "success")
     return redirect(url_for('admin.user_panel'))

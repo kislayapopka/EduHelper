@@ -25,13 +25,20 @@ class User(db.Model, UserMixin):
 
     posts = db.relationship(
         'Post',
+        cascade='all, delete-orphan',
         backref='author',
-        lazy=True
+        lazy=True,
     )
+
     submissions = db.relationship(
         'Submission',
+        passive_deletes=True,
         backref='student',
         lazy=True,
+    )
+
+    courses = db.relationship(
+        'CourseUser',
         cascade='all, delete-orphan',
-        passive_deletes=True
+        backref='user'
     )

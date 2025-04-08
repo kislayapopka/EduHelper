@@ -16,7 +16,7 @@
             </thead>
             <tbody>
                 {% for user in users %}
-                <tr>
+                <tr class="{% if not user.is_active %}table-secondary{% endif %}">
                     <td>{{ user.id }}</td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.surname }}</td>
@@ -29,8 +29,12 @@
                                 data-id="{{ user.id }}">
                             Изменить
                         </button>
-                        <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="post">
-                            <button type="submit" class="btn btn-danger">Удалить</button>
+                        <form action="{{ url_for('admin.logical_delete_user', user_id=user.id) }}" method="post">
+                            {{ form.hidden_tag() }}
+                            <button type="submit" class="btn btn-danger"
+                                    onclick="return confirm('Вы уверены?')">
+                                Удалить
+                            </button>
                         </form>
                     </td>
                 </tr>
