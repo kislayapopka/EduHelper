@@ -4,15 +4,23 @@
             <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">В списке нет нужного курса?</h5>
-                    {% if current_user.role == "student" %}
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#joinCourseModal">
-                            Подключиться к существующему
-                        </button>
-                    {% elif current_user.role == "teacher" %}
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCourseModal">
-                            Создать новый
-                        </button>
-                    {% endif %}
+                    <div class="card-content">
+                        {% if current_user.role == "student" %}
+                            <button class="btn btn-primary btn-icon"
+                                data-bs-toggle="modal"
+                                data-bs-target="#joinCourseModal">
+                                <i class="fas fa-link me-2"></i>
+                                Подключиться к курсу
+                            </button>
+                        {% elif current_user.role == "teacher" %}
+                            <button class="btn btn-primary btn-icon"
+                                data-bs-toggle="modal"
+                                data-bs-target="#createCourseModal">
+                                <i class="fas fa-plus-circle me-2"></i>
+                                Создать новый курс
+                            </button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

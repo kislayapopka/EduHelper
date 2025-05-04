@@ -182,7 +182,6 @@ def create_assignment():
                         db.session.add(attachment)
 
             db.session.commit()
-            # return jsonify({"message": "Задание успешно добавлено!"}), 200
             return redirect(url_for('feed.assignment_detail'))
 
         except Exception as e:

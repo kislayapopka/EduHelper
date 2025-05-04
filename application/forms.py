@@ -4,7 +4,7 @@ from wtforms.fields.choices import SelectMultipleField
 from wtforms.fields.datetime import DateTimeField
 from wtforms.fields.simple import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, \
     MultipleFileField, HiddenField
-from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, Email
 
 from application.models.user import User
 
@@ -41,10 +41,15 @@ class UserForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Адрес электронной почты', validators=[DataRequired(), Length(min=2, max=50)])
-    password = PasswordField('Пароль', validators=[DataRequired()])
+    email = StringField('Email', validators=[
+        DataRequired(message="Поле обязательно для заполнения"),
+        Email(message="Неверный формат email")
+    ])
+    password = PasswordField('Пароль', validators=[
+        DataRequired(message="Поле обязательно для заполнения")
+    ])
     remember = BooleanField('Запомнить меня')
-    submit = SubmitField('Авторизоваться')
+    submit = SubmitField('Войти')
 
 
 class PostForm(FlaskForm):

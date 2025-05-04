@@ -10,10 +10,12 @@
           <div class="form-group">
             {{ form.name.label }}
             {{ form.name(class="form-control", required=True) }}
+            <div class="invalid-feedback"></div>
           </div>
           <div class="form-group">
             {{ form.description.label }}
             {{ form.description(class="form-control") }}
+            <div class="invalid-feedback"></div>
           </div>
         </form>
       </div>
@@ -37,6 +39,7 @@
           <div class="form-group">
             {{ join_form.code.label }}
             {{ join_form.code(class="form-control", required=True) }}
+            <div class="invalid-feedback"></div>
           </div>
         </form>
       </div>
@@ -53,8 +56,12 @@ $(document).ready(function() {
     $('#submitCourseForm').click(function(e) {
         e.preventDefault();
 
-        const formData = $('#createCourseForm').serialize();
-        console.log("Form Data:", formData);
+        const form = $('#createCourseForm');
+        const formData = form.serialize();
+
+        form.find('.is-invalid').removeClass('is-invalid');
+        form.find('.invalid-feedback').text('');
+        $('.alert-error').remove();
 
         $.ajax({
             url: "{{ url_for('feed.create_course') }}",
@@ -62,27 +69,41 @@ $(document).ready(function() {
             data: formData,
             success: function(response) {
                 $('#createCourseModal').modal('hide');
-                alert(response.message);
                 location.reload();
             },
             error: function(jqXHR) {
-                console.log("Error:", jqXHR.responseText);
-                const errors = jqXHR.response;
-                for (const [field, messages] of Object.entries(errors)) {
-                    $(`#${field}`).addClass('is-invalid');
-                    $(`#${field}-feedback`).text(messages[0]);
+                const response = jqXHR.responseJSON;
+
+                $('#createCourseModal').modal('handleUpdate');
+
+                if (response?.errors) {
+                    for (const [field, messages] of Object.entries(response.errors)) {
+                        const input = form.find(`#${field}`);
+                        input.addClass('is-invalid');
+                        input.siblings('.invalid-feedback').text(messages.join(', '));
+                    }
+                }
+
+                if (response?.message) {
+                    form.prepend(`
+                        <div class="alert-error mb-3">
+                            ${response.message}
+                        </div>
+                    `);
                 }
             }
         });
     });
-});
 
-$(document).ready(function() {
     $('#submitJoinCourseForm').click(function(e) {
         e.preventDefault();
 
-        const formData = $('#joinCourseForm').serialize();
-        console.log("Form Data:", formData);
+        const form = $('#joinCourseForm');
+        const formData = form.serialize();
+
+        form.find('.is-invalid').removeClass('is-invalid');
+        form.find('.invalid-feedback').text('');
+        $('.alert-error').remove();
 
         $.ajax({
             url: "{{ url_for('feed.join_course') }}",
@@ -90,19 +111,27 @@ $(document).ready(function() {
             data: formData,
             success: function(response) {
                 $('#joinCourseModal').modal('hide');
-                alert(response.message);
                 location.reload();
             },
             error: function(jqXHR) {
-                console.log("Error:", jqXHR.responseText);
-                const errors = jqXHR.responseJSON;
-                if (errors) {
-                    for (const [field, messages] of Object.entries(errors)) {
-                        $(`#${field}`).addClass('is-invalid');
-                        $(`#${field}-feedback`).text(messages[0]);
+                const response = jqXHR.responseJSON;
+
+                $('#joinCourseModal').modal('handleUpdate');
+
+                if (response?.errors) {
+                    for (const [field, messages] of Object.entries(response.errors)) {
+                        const input = form.find(`#${field}`);
+                        input.addClass('is-invalid');
+                        input.after(`<div class="invalid-feedback">${messages.join(', ')}</div>`);
                     }
-                } else {
-                    alert('Произошла ошибка');
+                }
+
+                if (response?.message) {
+                    form.prepend(`
+                        <div class="alert-error mb-3">
+                            ${response.message}
+                        </div>
+                    `);
                 }
             }
         });
