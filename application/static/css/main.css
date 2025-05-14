@@ -1,7 +1,18 @@
+/* Общие стили */
 .page {
     display: flex;
     background: #f8f9fa;
     flex-direction: column;
+}
+
+.welcome-title {
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    letter-spacing: -0.5px;
+}
+
+.welcome-text {
+    line-height: 1.7;
+    opacity: 0.9;
 }
 
 .header {
@@ -18,19 +29,40 @@
     padding: 1rem 0;
     margin-left: 30px;
     top: 80px;
-    bottom: 30px;
     background: white;
     border: 1px solid #dee2e6;
     border-radius: 25px;
     box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.05);
     z-index: 999;
     overflow-y: auto;
+
+    height: auto;
+    max-height: calc(100vh - 110px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .menu-icon {
-    font-size: 1.5rem;
-    font-weight: 600;
-    transition: transform 0.2s;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-icon i {
+    font-size: 1.75rem;
+    color: #6c757d;
+    transition: inherit;
+}
+
+:root {
+    --sidebar-icon-size: 1.75rem;
+    --sidebar-active-border: 2px;
 }
 
 .nav-link {
@@ -38,15 +70,34 @@
     width: 70px!important;
     height: 70px!important;
     margin: 8px auto;
+    position: relative;
+    overflow: hidden;
 }
 
 .nav-link.active {
     background: #0d6efd!important;
-    color: white!important;
+    color: var(--bs-primary)!important;
+}
+
+.nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: var(--bs-primary);
+    transition: all 0.3s ease;
+}
+
+.nav-link.active::after {
+    width: 40%;
+    left: 30%;
 }
 
 .nav-link:hover:not(.active) {
     background: #e9ecef!important;
+    transform: rotate(-5deg);
 }
 
 .content {
@@ -73,53 +124,7 @@
     padding: 1.5rem;
 }
 
-@media (max-width: 768px) {
-    .sidebar {
-        width: 70px;
-        margin-left: 15px;
-        top: 80px;
-        bottom: 80px;
-    }
-
-    .content {
-        margin-left: 95px;
-        margin-right: 15px;
-    }
-
-    .nav-link {
-        width: 50px!important;
-        height: 50px!important;
-    }
-
-    .menu-icon {
-        font-size: 1.2rem;
-    }
-
-    #carouselCourse {
-        max-width: 90%;
-        padding: 0 15px;
-    }
-
-    #carouselCourse .card {
-        min-height: 240px;
-    }
-
-    #carouselCourse .card-title {
-        font-size: 1.3rem;
-    }
-
-    #carouselCourse .btn {
-        min-width: 180px;
-        padding: 10px 20px;
-    }
-
-    #carouselCourse .carousel-control-prev,
-    #carouselCourse .carousel-control-next {
-        width: 30px;
-        height: 30px;
-    }
-}
-
+/* Элементы форм */
 .form-label {
     margin-bottom: 0.5rem;
     display: block;
@@ -129,6 +134,7 @@
     margin-top: 0.25rem;
 }
 
+/* Карусель */
 #carouselCourse {
     position: relative;
     max-width: 900px;
@@ -180,12 +186,6 @@
     font-weight: 500;
 }
 
-#carouselCourse .carousel-item.active .card {
-    border-color: #0d6efd;
-    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.15);
-    z-index: 1;
-}
-
 #carouselCourse .carousel-control-prev,
 #carouselCourse .carousel-control-next {
     width: 40px;
@@ -194,14 +194,6 @@
     border-radius: 50%;
     top: 50%;
     transform: translateY(-50%);
-}
-
-#carouselCourse .carousel-control-prev {
-    left: -20px;
-}
-
-#carouselCourse .carousel-control-next {
-    right: -20px;
 }
 
 #carouselCourse .carousel-control-prev-icon,
@@ -216,6 +208,7 @@
     padding: 15px 0;
 }
 
+/* Секции */
 .teacher-section {
     border-top: 2px solid #0d6efd;
     padding-top: 1.5rem;
@@ -228,6 +221,7 @@
     margin-top: 2rem;
 }
 
+/* Аккордеон */
 .accordion-button:not(.collapsed) {
     background-color: #e7f1ff;
     color: #0d6efd;
@@ -241,8 +235,266 @@
     transform: translateY(-2px);
 }
 
-.copy-message {
-    font-size: 12px;
-    color: green;
-    margin-top: 5px;
+/* Информационные посты */
+.list-group-item {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.list-group-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #dee2e6;
+}
+
+.list-group-item h5 {
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.list-group-item h5 a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.list-group-item h5 a:hover {
+    color: #0d6efd;
+}
+
+.list-group-item p {
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.list-group-item small {
+    display: block;
+    font-size: 0.85rem;
+    color: #a35d51;
+}
+
+.list-group-item small:first-of-type {
+    margin-bottom: 0.5rem;
+}
+
+.info-post {
+    background: #f8f0ff;
+    border-color: #e9d8fd;
+    padding-left: 50px;
+    position: relative;
+}
+
+.info-post small {
+    display: none;
+}
+
+.info-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #6f42c1;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    font-family: 'Arial', sans-serif;
+}
+
+.info-post h5 {
+    color: #4a376a;
+}
+
+.info-post p {
+    color: #7a6f8c;
+}
+
+/* Статусы */
+.status-badge {
+    background: #e9ecef;
+    color: #495057;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    float: right;
+}
+
+.status-completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-expired {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Медиа-запросы */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        margin-left: 15px;
+        bottom: 80px;
+    }
+
+    .content {
+        margin-left: 95px;
+        margin-right: 15px;
+    }
+
+    .nav-link {
+        width: 50px!important;
+        height: 50px!important;
+    }
+
+    #carouselCourse {
+        max-width: 90%;
+        padding: 0 15px;
+    }
+
+    #carouselCourse .card {
+        min-height: 240px;
+    }
+
+    #carouselCourse .card-title {
+        font-size: 1.3rem;
+    }
+
+    #carouselCourse .btn {
+        min-width: 180px;
+        padding: 10px 20px;
+    }
+
+    #carouselCourse .carousel-control-prev,
+    #carouselCourse .carousel-control-next {
+        width: 30px;
+        height: 30px;
+    }
+
+    .info-icon {
+        left: 10px;
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+    }
+
+    .info-post {
+        padding-left: 40px;
+    }
+
+        .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .modal-content {
+        border-radius: 15px;
+    }
+
+    .modal-header {
+        padding: 1rem;
+    }
+
+    .modal-title {
+        font-size: 1.1rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .form-control, .form-select {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: 10px;
+        padding: 1rem;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+        margin: 0;
+    }
+}
+
+/* Календарь */
+.tempus-dominus-widget {
+    z-index: 1060 !important;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.td-collapse {
+    border: 1px solid #dee2e6 !important;
+}
+
+.td-timepicker {
+    background: #f8f9fa !important;
+}
+
+.datetimepicker-input {
+    background: white !important;
+}
+
+.input-group-text {
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+}
+
+.toast {
+    transition: all 0.3s ease-in-out;
+    opacity: 0.95;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+/* Формы */
+.form-group {
+    transition: opacity 0.3s ease;
+}
+
+.form-group.hidden {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    transition: border-color 0.15s ease-in-out;
+}
+
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }

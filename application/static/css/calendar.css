@@ -1,0 +1,134 @@
+.calendar-table {
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 5px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day {
+    height: 100px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: white;
+    border-radius: 8px;
+    padding: 8px;
+    vertical-align: top;
+    border: 2px solid transparent;
+}
+
+.calendar-day:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-empty {
+    background-color: #f8f9fa;
+    border: 2px solid #eee;
+}
+
+.has-assignments {
+    background-color: #e3f2fd;
+    border-color: #90caf9;
+}
+
+.day-number {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: #607d8b;
+}
+
+.assignments-dot {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #2196f3;
+    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.3);
+}
+
+.tooltip-inner {
+    white-space: pre-line;
+    text-align: left;
+    max-width: 300px;
+}
+
+.btn-outline-primary {
+    border-color: #90caf9;
+    color: #2196f3;
+    transition: all 0.2s;
+}
+
+.btn-outline-primary:hover {
+    background-color: #e3f2fd;
+    border-color: #42a5f5;
+}
+
+.assignments-dropdown {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+.assignment-menu {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    padding: 0.5rem 0;
+    background: white;
+}
+
+.assignment-menu.show {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.dropdown-header {
+    padding: 0.25rem 1rem;
+    font-size: 0.75rem;
+    color: #6c757d;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    white-space: normal;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(3px);
+}
+
+.bullet {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, 5px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}

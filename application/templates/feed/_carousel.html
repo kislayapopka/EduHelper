@@ -93,15 +93,31 @@
 
         function updatePostList(posts) {
             const postList = $('#post-list');
+
+            posts.sort((a, b) => {
+                const dateDiff = new Date(b.date_created) - new Date(a.date_created);
+                return dateDiff !== 0 ? dateDiff : b.id - a.id;
+            });
+
             postList.empty();
 
             posts.forEach(post => {
+                const isInfoPost = post.is_info;
                 const postHTML = `
-                    <li class="list-group-item">
-                        <h5><a href="/assignment_detail/${post.id}">${post.caption}</a></h5>
-                        <p>${post.body.substring(0, 100)}...</p>
-                        <small>Дата публикации: ${post.date_created}</small><br />
-                        <small>Срок выполнения: ${post.due_date}</small>
+                    <li class="list-group-item ${isInfoPost ? 'info-post' : ''}">
+                        ${isInfoPost ? '<div class="info-icon">i</div>' : ''}
+                        <div class="post-content">
+                            <h5>
+                                ${isInfoPost ?
+                                    `<span class="info-title">${post.caption}</span>` :
+                                    `<a href="/assignment_detail/${post.id}">${post.caption}</a>`}
+                            </h5>
+                            <p>${post.body.substring(0, 100)}...</p>
+                            ${!isInfoPost ? `
+                                <small>Дата публикации: ${post.date_created}</small><br />
+                                <small>Срок выполнения: ${post.due_date}</small>
+                            ` : ''}
+                        </div>
                     </li>
                 `;
                 postList.append(postHTML);

@@ -21,8 +21,18 @@
                     </div>
                     <div class="mb-3">
                         {{ edit_form.due_date.label }}
-                        {{ edit_form.due_date(class="form-control") }}
-                        <div class="invalid-feedback"></div>
+                        <div class="input-group" id="datetimepickerMain">
+                            {{ edit_form.due_date(
+                                class="form-control datetimepicker-input",
+                                id="post_due_date",
+                                **{"data-td-target": "#datetimepickerMain"}
+                            ) }}
+                            <span class="input-group-text"
+                                  data-td-target="#datetimepickerMain"
+                                  data-td-toggle="datetimepicker">
+                                <i class="fas fa-calendar-alt"></i>
+                            </span>
+                        </div>
                     </div>
                     <div class="mb-3">
                         {{ edit_form.attached_files.label }}

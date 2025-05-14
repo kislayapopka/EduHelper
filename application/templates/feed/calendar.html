@@ -1,0 +1,65 @@
+{% extends "main/base.html" %}
+{% block title %}Календарь сроков сдачи{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="calendar-header d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ month_name }} {{ year }}</h2>
+        <div>
+            <a href="{{ url_for('calendar.index', year=prev_year, month=prev_month) }}"
+               class="btn btn-outline-primary">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <a href="{{ url_for('calendar.index', year=next_year, month=next_month) }}"
+               class="btn btn-outline-primary">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered calendar-table">
+        <thead>
+            <tr>
+                {% for day in ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] %}
+                    <th class="text-center">{{ day }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for week in calendar %}
+                <tr>
+                    {% for day in week %}
+                        <td class="text-center {% if day == 0 %}calendar-empty{% else %}calendar-day{% endif %}
+                            {% if day in assignments %}has-assignments{% endif %}"
+                            {% if day != 0 and day in assignments %}
+                                data-bs-toggle="tooltip"
+                                title="{% for assignment in assignments[day] %}{{ assignment.caption }}&#10;{% endfor %}"
+                            {% endif %}>
+                            {% if day != 0 %}
+                                <div class="day-number">{{ day }}</div>
+                                {% if day in assignments %}
+                                    <div class="assignments-dot"></div>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function(){
+    $('[data-bs-toggle="tooltip"]').tooltip({
+        placement: 'top',
+        trigger: 'hover',
+        html: true
+    });
+
+    const currentDate = new Date("{{ current_date.isoformat() }}");
+});
+</script>
+{% endblock %}

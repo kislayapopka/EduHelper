@@ -1,4 +1,8 @@
+import os
 from datetime import datetime
+
+from flask import current_app
+from sqlalchemy import event
 from ..extensions import db
 
 
@@ -8,8 +12,8 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id', ondelete='CASCADE'), nullable=False)
 
-    date_created = db.Column(db.DateTime, default=datetime.now())
-    due_date = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow())
+    due_date = db.Column(db.DateTime, nullable=True)
     caption = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=True)
     is_info = db.Column(db.Boolean, default=False)
@@ -90,6 +94,16 @@ class SubmissionAttachment(db.Model):
 
     file_path = db.Column(db.String(500), nullable=False)
     filename = db.Column(db.String(255), nullable=False)
+
+
+@event.listens_for(SubmissionAttachment, 'before_delete')
+def delete_attachment_files(mapper, connection, target):
+    try:
+        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], target.file_path)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+    except Exception as e:
+        current_app.logger.error(f"Error deleting file {target.file_path}: {str(e)}")
 
 
 # One2Many relation table

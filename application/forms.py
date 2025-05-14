@@ -56,9 +56,10 @@ class PostForm(FlaskForm):
     course_id = HiddenField("Course ID")
     caption = StringField("Название задания", validators=[DataRequired()])
     body = TextAreaField("Описание задания", validators=[DataRequired()])
-    due_date = DateTimeField("Срок выполнения", format="%Y-%m-%d %H:%M", validators=[DataRequired()])
+    due_date = DateTimeField("Срок выполнения", format="%d.%m.%Y %H:%M")
     attached_files = MultipleFileField("Прикрепленные файлы", validators=[FileAllowed(
         ['pdf', 'docx', 'png', 'jpg', 'jpeg', 'zip'], "Недопустимый формат файла!")])
+    is_info = BooleanField('Информационный пост')
     submit = SubmitField("Создать публикацию")
 
 
@@ -66,7 +67,7 @@ class EditPostForm(FlaskForm):
     course_id = HiddenField("Course ID")
     caption = StringField('Заголовок', validators=[DataRequired()])
     body = TextAreaField('Текст', validators=[DataRequired()])
-    due_date = DateTimeField("Срок выполнения", format="%Y-%m-%d %H:%M", validators=[DataRequired()])
+    due_date = DateTimeField("Срок выполнения", format="%d.%m.%Y %H:%M", validators=[DataRequired()])
     attached_files = MultipleFileField("Прикрепленные файлы", validators=[FileAllowed(
         ['pdf', 'docx', 'png', 'jpg', 'jpeg', 'zip'], "Недопустимый формат файла!")])
     submit = SubmitField("Изменить публикацию")

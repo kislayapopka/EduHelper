@@ -1,7 +1,6 @@
 <header class="p-3 mb-3 border-bottom">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-between">
-
             <div class="d-flex align-items-center">
                 {% if current_user.is_authenticated %}
                     <div class="d-flex align-items-center me-3">
@@ -13,18 +12,6 @@
                                 {{ current_user.patronymic[0] }}.
                             {% endif %}
                         </span>
-                    </div>
-
-                    <div class="dropdown">
-                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item">Настройки аккаунта</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('login.logout') }}">Выйти из системы</a></li>
-                        </ul>
                     </div>
                 {% else %}
                     <div class="d-flex">

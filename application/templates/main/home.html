@@ -1,5 +1,20 @@
 {% extends 'main/base.html' %}
 {% block title %} Домашняя страница {% endblock %}
 {% block content %}
-    Добро пожаловать на главную страницу
+    <div class="welcome-container d-flex flex-column justify-content-center align-items-center min-vh-100">
+        <div class="text-center px-3" style="max-width: 800px;">
+            <h1 class="welcome-title display-4 fw-bold text-primary mb-4 animate__animated animate__fadeInDown">
+                Добро пожаловать на главную страницу!
+            </h1>
+            {% if current_user.is_authenticated %}
+                <p class="welcome-text fs-5 text-muted mb-0 animate__animated animate__fadeInUp animate__delay-1s">
+                    Воспользуйтесь боковым меню для перехода навигации по ресурсу
+                </p>
+            {% else %}
+                <p class="welcome-text fs-5 text-muted mb-0 animate__animated animate__fadeInUp animate__delay-1s">
+                    Произведите авторизацию, чтобы воспользоваться функционалом помощника проведения производственных практик!
+                </p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
