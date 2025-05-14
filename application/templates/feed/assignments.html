@@ -3,34 +3,44 @@
 {% block content %}
     <div class="container mt-4">
         {% include "feed/_carousel.html" %}
-
         {% include "feed/_modal.html" %}
-
         <ul id="newPostFormList" class="list-group-item mt-3">
         {% if current_user.role == "teacher" %}
-            <form id="newPostForm"
-                  method="POST"
-                  action="{{ url_for('feed.create_assignment') }}"
-                  enctype="multipart/form-data">
+            <form id="newPostForm" method="POST" action="{{ url_for('feed.create_assignment') }}" enctype="multipart/form-data">
                 <input type="hidden" name="course_id" id="course_id_input">
                 {{ post_form.hidden_tag() }}
                 <li class="list-group-item">
-                    <div class="form-group">
-                        {{ post_form.caption.label }}
-                        {{ post_form.caption(class="form-control", required=True) }}
+                    <div class="form-group form-check mb-3">
+                        {{ post_form.is_info(class="form-check-input", id="post_is_info") }}
+                        {{ post_form.is_info.label(class="form-check-label", for="post_is_info") }}
                     </div>
                     <div class="form-group">
-                        {{ post_form.body.label }}
-                        {{ post_form.body(class="form-control") }}
+                        {{ post_form.caption.label(for="post_caption") }}
+                        {{ post_form.caption(class="form-control", id="post_caption", required=True) }}
                     </div>
                     <div class="form-group">
-                        {{ post_form.due_date.label }}
-                        {{ post_form.due_date(class="form-control") }}
+                        {{ post_form.body.label(for="post_body") }}
+                        {{ post_form.body(class="form-control", id="post_body") }}
                     </div>
-                    <div class="form-group">
-                        {{ post_form.attached_files.label }}
-                        {{ post_form.attached_files(class="form-control") }}
-                        <div class="form-text mt-2">
+                    <div class="form-group due-date-field">
+                        <label for="post_due_date">Срок выполнения</label>
+                        <div class="input-group" id="datetimepickerMain">
+                            {{ post_form.due_date(
+                                class="form-control datetimepicker-input",
+                                id="post_due_date",
+                                **{"data-td-target": "#datetimepickerMain"}
+                            ) }}
+                            <span class="input-group-text"
+                                  data-td-target="#datetimepickerMain"
+                                  data-td-toggle="datetimepicker">
+                                <i class="fas fa-calendar-alt"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group file-upload-field">
+                        {{ post_form.attached_files.label(for="post_attached_files") }}
+                        {{ post_form.attached_files(class="form-control", id="post_attached_files") }}
+                        <div class="form-text mt-2" id="file_help_text">
                             Максимальный размер файла: 25MB. Допустимые форматы: PDF, DOCX, PNG, JPG, JPEG, ZIP
                         </div>
                     </div>
@@ -38,17 +48,11 @@
                         <button type="submit" class="btn btn-primary" id="submitButton">
                             Создать задание
                         </button>
-                        <div id="loadingIndicator" style="display: none;">
-                            Загрузка...
-                        </div>
                     </div>
                 </li>
             </form>
         {% endif %}
         </ul>
-
-        <ul id="post-list" class="list-group mt-3">
-
-        </ul>
+        <ul id="post-list" class="list-group mt-3"></ul>
     </div>
 {% endblock %}

@@ -1,0 +1,42 @@
+<div class="d-flex flex-column flex-shrink-0">
+    <ul class="nav nav-pills flex-column mb-auto gap-2 p-2">
+        <li class="nav-item">
+            <a href="{{ url_for('feed.assignments') }}"
+               class="nav-link d-flex align-items-center justify-content-center {% if request.endpoint == 'feed.assignments' %}active{% endif %}"
+               style="width: 70px; height: 70px; border-radius: 12px!important;">
+                <span class="menu-icon">
+                    <i class="fas fa-home fa-lg"></i>
+                </span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('calendar.index') }}"
+               class="nav-link d-flex align-items-center justify-content-center {% if request.endpoint == 'calendar.index' %}active{% endif %}"
+               style="width: 70px; height: 70px; border-radius: 12px!important;">
+                <span class="menu-icon">
+                    <i class="far fa-calendar-alt fa-lg"></i>
+                </span>
+            </a>
+        </li>
+        {% if current_user.role == 'admin' %}
+        <li class="nav-item">
+            <a href="{{ url_for('admin.user_panel') }}"
+               class="nav-link d-flex align-items-center justify-content-center"
+               style="width: 70px; height: 70px; border-radius: 12px!important;">
+                <span class="menu-icon">
+                    <i class="far fa-user fa-lg"></i>
+                </span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+    <div class="mt-auto p-2">
+        <a href="{{ url_for('login.logout') }}"
+           class="nav-link d-flex align-items-center justify-content-center logout-btn"
+           style="width: 70px; height: 70px; border-radius: 12px!important;">
+            <span class="menu-icon">
+                <i class="fas fa-sign-out-alt fa-lg"></i>
+            </span>
+        </a>
+    </div>
+</div>

@@ -12,13 +12,13 @@ def index():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data) & user.is_active:
+        if user and bcrypt.check_password_hash(user.password, form.password.data) and user.is_active:
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            flash(f"Вы были авторизованы с почтой {form.email.data}!", "success")
             return redirect(next_page) if next_page else redirect(url_for('home.index'))
-        else:
-            flash("Ошибка авторизации. Пожалуйста, проверьте корректность введённых данных", "danger")
+
+        form.password.errors.append("Неверный email или пароль")
+
     return render_template('authorization/login.html', form=form)
 
 

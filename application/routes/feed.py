@@ -1,5 +1,6 @@
 import os
 import string
+from datetime import datetime
 from random import choices
 
 from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, request, current_app
@@ -88,39 +89,70 @@ def assignment_detail(post_id):
     submission_form = SubmissionForm()
     edit_form = EditPostForm()
 
+    current_user_submission = Submission.query.filter_by(
+        post_id=post.id,
+        student_id=current_user.id
+    ).first()
+
     if current_user.role == 'teacher':
         submissions = Submission.query.filter_by(post_id=post.id).all()
     else:
         submissions = None
 
     if submission_form.validate_on_submit():
-        new_submission = Submission(
-            post_id=post.id,
-            student_id=current_user.id,
-        )
+        if current_user_submission:
+            current_user_submission.submitted_at = datetime.now()
 
-        if submission_form.attached_files.data:
-            for file in submission_form.attached_files.data:
-                if file:
-                    filename = secure_filename(file.filename)
-                    file_path = os.path.join(Config.UPLOAD_FOLDER, filename)
-                    file.save(file_path)
+            for attachment in current_user_submission.submission_attachments:
+                db.session.delete(attachment)
 
-                    attachment = SubmissionAttachment(
-                        submission=new_submission,
-                        file_path=filename,
-                        filename=filename
-                    )
-                    db.session.add(attachment)
+            if submission_form.attached_files.data:
+                for file in submission_form.attached_files.data:
+                    if file and file.filename:
+                        filename = secure_filename(file.filename)
+                        file_path = os.path.join(Config.UPLOAD_FOLDER, filename)
+                        file.save(file_path)
 
-        db.session.add(new_submission)
-        db.session.commit()
-        flash('Работа успешно отправлена', 'success')
+                        attachment = SubmissionAttachment(
+                            submission=current_user_submission,
+                            file_path=filename,
+                            filename=filename
+                        )
+                        db.session.add(attachment)
+
+            db.session.commit()
+            flash('Работа успешно обновлена', 'success')
+
+        else:
+            new_submission = Submission(
+                post_id=post.id,
+                student_id=current_user.id,
+            )
+
+            if submission_form.attached_files.data:
+                for file in submission_form.attached_files.data:
+                    if file and file.filename:
+                        filename = secure_filename(file.filename)
+                        file_path = os.path.join(Config.UPLOAD_FOLDER, filename)
+                        file.save(file_path)
+
+                        attachment = SubmissionAttachment(
+                            submission=new_submission,
+                            file_path=filename,
+                            filename=filename
+                        )
+                        db.session.add(attachment)
+
+            db.session.add(new_submission)
+            db.session.commit()
+            flash('Работа успешно отправлена', 'success')
+
         return redirect(url_for('feed.assignment_detail', post_id=post.id))
 
     return render_template("feed/assignment_detail.html",
                            post=post,
                            submissions=submissions,
+                           current_user_submission=current_user_submission,
                            submission_form=submission_form,
                            edit_form=edit_form)
 
@@ -129,7 +161,9 @@ def assignment_detail(post_id):
 @login_required
 def get_posts_by_course_id():
     course_id = request.args.get('courseId')
-    posts = Post.query.filter_by(course_id=course_id).all()
+    posts = (Post.query.filter_by(course_id=course_id)
+             .order_by(Post.date_created.desc())
+             .all())
 
     posts_json = []
     for post in posts:
@@ -138,7 +172,8 @@ def get_posts_by_course_id():
             'caption': post.caption,
             'body': post.body,
             'date_created': post.date_created.strftime("%Y-%m-%d"),
-            'due_date': post.due_date.strftime("%Y-%m-%d %H:%M")
+            'due_date': post.due_date.strftime("%Y-%m-%d %H:%M") if post.due_date else None,
+            'is_info': post.is_info
         })
 
     return jsonify(posts_json)
@@ -161,7 +196,8 @@ def create_assignment():
                 course_id=course_id,
                 caption=form.caption.data,
                 body=form.body.data,
-                due_date=form.due_date.data
+                due_date=form.due_date.data,
+                is_info=form.is_info.data
             )
 
             db.session.add(new_post)
@@ -182,7 +218,6 @@ def create_assignment():
                         db.session.add(attachment)
 
             db.session.commit()
-            # return jsonify({"message": "Задание успешно добавлено!"}), 200
             return redirect(url_for('feed.assignment_detail'))
 
         except Exception as e:

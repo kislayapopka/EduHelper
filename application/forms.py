@@ -4,7 +4,7 @@ from wtforms.fields.choices import SelectMultipleField
 from wtforms.fields.datetime import DateTimeField
 from wtforms.fields.simple import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, \
     MultipleFileField, HiddenField
-from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, Email
 
 from application.models.user import User
 
@@ -41,19 +41,25 @@ class UserForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Адрес электронной почты', validators=[DataRequired(), Length(min=2, max=50)])
-    password = PasswordField('Пароль', validators=[DataRequired()])
+    email = StringField('Email', validators=[
+        DataRequired(message="Поле обязательно для заполнения"),
+        Email(message="Неверный формат email")
+    ])
+    password = PasswordField('Пароль', validators=[
+        DataRequired(message="Поле обязательно для заполнения")
+    ])
     remember = BooleanField('Запомнить меня')
-    submit = SubmitField('Авторизоваться')
+    submit = SubmitField('Войти')
 
 
 class PostForm(FlaskForm):
     course_id = HiddenField("Course ID")
     caption = StringField("Название задания", validators=[DataRequired()])
     body = TextAreaField("Описание задания", validators=[DataRequired()])
-    due_date = DateTimeField("Срок выполнения", format="%Y-%m-%d %H:%M", validators=[DataRequired()])
+    due_date = DateTimeField("Срок выполнения", format="%d.%m.%Y %H:%M")
     attached_files = MultipleFileField("Прикрепленные файлы", validators=[FileAllowed(
         ['pdf', 'docx', 'png', 'jpg', 'jpeg', 'zip'], "Недопустимый формат файла!")])
+    is_info = BooleanField('Информационный пост')
     submit = SubmitField("Создать публикацию")
 
 
@@ -61,7 +67,7 @@ class EditPostForm(FlaskForm):
     course_id = HiddenField("Course ID")
     caption = StringField('Заголовок', validators=[DataRequired()])
     body = TextAreaField('Текст', validators=[DataRequired()])
-    due_date = DateTimeField("Срок выполнения", format="%Y-%m-%d %H:%M", validators=[DataRequired()])
+    due_date = DateTimeField("Срок выполнения", format="%d.%m.%Y %H:%M", validators=[DataRequired()])
     attached_files = MultipleFileField("Прикрепленные файлы", validators=[FileAllowed(
         ['pdf', 'docx', 'png', 'jpg', 'jpeg', 'zip'], "Недопустимый формат файла!")])
     submit = SubmitField("Изменить публикацию")

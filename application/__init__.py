@@ -3,12 +3,14 @@ import os
 from flask import Flask
 from application.extensions import db, migrate, login_manager
 from .config import Config
+from application.init_users import init_users
 
 # For every new created route import needs to be added
 from application.routes.admin import admin
 from application.routes.home import home
 from application.routes.feed import feed
 from application.routes.login import login
+from application.routes.calendar import calendar
 from application.routes.registration import registration
 
 
@@ -28,6 +30,7 @@ def create_app(config_class=Config):
     app.register_blueprint(login)
     app.register_blueprint(registration)
     app.register_blueprint(feed)
+    app.register_blueprint(calendar)
 
     # Database image with app context
     db.init_app(app)
@@ -45,5 +48,6 @@ def create_app(config_class=Config):
     # Building database
     with app.app_context():
         db.create_all()
+        init_users()
 
     return app
